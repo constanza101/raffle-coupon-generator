@@ -84,7 +84,7 @@
     .coupon-org  { font-size: 8px; font-weight: 600; letter-spacing: 0.4px; margin-bottom: 2px; }
     .coupon-number { font-size: 15px; font-weight: 700; line-height: 1.1; }
     .coupon-name   { font-size: 8px; color: #888; margin-bottom: 4px; }
-    .coupon-fields { display: grid; gap: 6px; }
+    .coupon-fields { display: grid; }
     .coupon-field  { display: flex; align-items: flex-end; gap: 4px; }
     .field-label   { font-size: 8px; font-weight: 600; color: #666; width: 48px; flex-shrink: 0; white-space: nowrap; }
     .field-line    { flex: 1; border-bottom: 0.75px solid #aaa; height: 14.5px; }
@@ -156,11 +156,17 @@
       </div>
       <div>
         <label data-i18n="labelPorPagina"></label>
-        <select id="porPagina">
+        <select id="porPagina" onchange="syncGapFromPorPagina(this.value)">
           <option value="4" data-i18n="opt4"></option>
           <option value="8" data-i18n="opt8"></option>
           <option value="10" selected data-i18n="opt10"></option>
           <option value="12" data-i18n="opt12"></option>
+          <option value="14" data-i18n="opt14"></option>
+          <option value="15" data-i18n="opt15"></option>
+          <option value="16" data-i18n="opt16"></option>
+          <option value="18" data-i18n="opt18"></option>
+          <option value="20" data-i18n="opt20"></option>
+          <option value="21" data-i18n="opt21"></option>
         </select>
       </div>
       <div>
@@ -234,6 +240,12 @@
       fInstagram:  'Instagram',
       labelGap: 'Espacio entre campos',
       labelFontSize: 'Tamaño de fuente',
+      opt14: '14 por página',
+      opt15: '15 por página (3 columnas)',
+      opt16: '16 por página',
+      opt18: '18 por página (3 columnas)',
+      opt20: '20 por página',
+      opt21: '21 por página (3 columnas)',
     },
     en: {
       title:       'Raffle Coupon Generator',
@@ -263,6 +275,12 @@
       fInstagram:  'Instagram',
       labelGap: 'Space between fields',
       labelFontSize: 'Font size',
+      opt14: '14 per page',
+      opt15: '15 per page (3 columns)',
+      opt16: '16 per page',
+      opt18: '18 per page (3 columns)',
+      opt20: '20 per page',
+      opt21: '21 per page (3 columns)',
     }
   };
 
@@ -286,6 +304,22 @@
     document.title = t.title;
   }
 
+  const gapDefaults = {4:24, 8:24, 10:14, 12:7, 14:2, 15:14, 16:2, 18:5, 20:2, 21:2};
+
+  function syncGapFromPorPagina(val) {
+    const pp = parseInt(val);
+    if (gapDefaults[pp] !== undefined) {
+      const slider = document.getElementById('fieldGap');
+      slider.value = gapDefaults[pp];
+      document.getElementById('fieldGapVal').textContent = gapDefaults[pp] + 'px';
+    }
+    // Round cantidad up to next multiple of pp to fill the page
+    const cantidadEl = document.getElementById('cantidad');
+    const current = parseInt(cantidadEl.value) || pp;
+    const rounded = Math.ceil(current / pp) * pp;
+    cantidadEl.value = rounded;
+  }
+
   function pad(n, d) { return String(n).padStart(d, '0'); }
 
   function generarPreview() {
@@ -302,7 +336,7 @@
     const fieldFontSize = document.getElementById('fieldFontSize').value;
 
     const paginas = Math.ceil(cantidad / porPag);
-    const cols = porPag <= 4 ? 1 : 2;
+    const cols = porPag <= 4 ? 1 : (porPag === 21 || porPag === 18 || porPag === 15) ? 3 : 2;
     const rows = Math.ceil(porPag / cols);
     let html = '';
 
@@ -316,17 +350,17 @@
         const num = pad(desde + idx, digits);
         html += `
           <div class="coupon">
-            <div class="coupon-band" style="background:${color}">${org}</div>
+            <div class="coupon-band" style="background:${color};flex-basis:${cols === 3 ? 28 : 52}px;">${org}</div>
             <div class="coupon-main">
               <div class="coupon-org" style="color:${color}">${org.toUpperCase()}</div>
               <div class="coupon-number" style="color:${color}">#${num}</div>
               <div class="coupon-name">${nombre}</div>
-              <div class="coupon-fields" style="gap:${fieldGap}px;">
-                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fNombre}</span><span class="field-line"></span></div>
-                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fApellido}</span><span class="field-line"></span></div>
-                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fDNI}</span><span class="field-line"></span></div>
-                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fCelular}</span><span class="field-line"></span></div>
-                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fInstagram}</span><span class="field-line"></span></div>
+              <div class="coupon-fields">
+                <div class="coupon-field"><span class="field-label">${t.fNombre}</span><span class="field-line"></span></div>
+                <div class="coupon-field"><span class="field-label">${t.fApellido}</span><span class="field-line"></span></div>
+                <div class="coupon-field"><span class="field-label">${t.fDNI}</span><span class="field-line"></span></div>
+                <div class="coupon-field"><span class="field-label">${t.fCelular}</span><span class="field-line"></span></div>
+                <div class="coupon-field"><span class="field-label">${t.fInstagram}</span><span class="field-line"></span></div>
               </div>
             </div>
             ${mostrarTalon ? `<div class="coupon-stub"><span class="stub-num" style="color:${color}">#${num}</span></div>` : ''}
@@ -335,9 +369,22 @@
       html += '</div></div>';
     }
 
+    document.getElementById('previewArea').innerHTML = '';
     document.getElementById('previewArea').innerHTML = html;
 
-    const alturaFactor = porPag >= 10 ? 0.90 : 1.0;
+    // Apply gap and font size directly after render
+    const resolvedGap = parseInt(document.getElementById('fieldGap').value);
+    const resolvedFont = parseFloat(document.getElementById('fieldFontSize').value);
+    document.querySelectorAll('.coupon-fields').forEach(el => el.style.setProperty('gap', resolvedGap + 'px', 'important'));
+    document.querySelectorAll('.field-label').forEach(el => el.style.setProperty('font-size', resolvedFont + 'px', 'important'));
+
+    const alturaFactor = porPag >= 20 ? 0.82
+                         : porPag >= 18 ? 0.84
+                         : porPag >= 16 ? 0.85
+                         : porPag >= 15 ? 0.87
+                         : porPag >= 14 ? 0.87
+                         : porPag >= 10 ? 0.90
+                         : 1.0;
     document.querySelectorAll('.a4-page').forEach(page => {
       const w = page.offsetWidth;
       const h = Math.round(w * 297 / 210 * alturaFactor);
@@ -346,6 +393,7 @@
   }
 
   applyI18n();
+  syncGapFromPorPagina(document.getElementById('porPagina').value);
   generarPreview();
 </script>
 </body>
