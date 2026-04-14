@@ -178,6 +178,22 @@
         <span data-i18n="labelTalon"></span>
       </label>
     </div>
+    <div class="grid2" style="margin-top: 12px;">
+      <div>
+        <label data-i18n="labelGap"></label>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="range" id="fieldGap" min="2" max="24" value="14" step="1" style="flex:1;" oninput="document.getElementById('fieldGapVal').textContent=this.value+'px'" />
+          <span id="fieldGapVal" style="font-size:13px; min-width:32px; color:#555;">14px</span>
+        </div>
+      </div>
+      <div>
+        <label data-i18n="labelFontSize"></label>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="range" id="fieldFontSize" min="6" max="14" value="8" step="0.5" style="flex:1;" oninput="document.getElementById('fieldFontSizeVal').textContent=this.value+'px'" />
+          <span id="fieldFontSizeVal" style="font-size:13px; min-width:32px; color:#555;">8px</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="actions">
@@ -216,6 +232,8 @@
       fDNI:        'DNI',
       fCelular:    'Celular',
       fInstagram:  'Instagram',
+      labelGap: 'Espacio entre campos',
+      labelFontSize: 'Tamaño de fuente',
     },
     en: {
       title:       'Raffle Coupon Generator',
@@ -243,6 +261,8 @@
       fDNI:        'ID',
       fCelular:    'Phone',
       fInstagram:  'Instagram',
+      labelGap: 'Space between fields',
+      labelFontSize: 'Font size',
     }
   };
 
@@ -278,6 +298,8 @@
     const porPag = parseInt(document.getElementById('porPagina').value);
     const digits = parseInt(document.getElementById('fmtNum').value);
     const mostrarTalon = document.getElementById('mostrarTalon').checked;
+    const fieldGap      = document.getElementById('fieldGap').value;
+    const fieldFontSize = document.getElementById('fieldFontSize').value;
 
     const paginas = Math.ceil(cantidad / porPag);
     const cols = porPag <= 4 ? 1 : 2;
@@ -299,12 +321,12 @@
               <div class="coupon-org" style="color:${color}">${org.toUpperCase()}</div>
               <div class="coupon-number" style="color:${color}">#${num}</div>
               <div class="coupon-name">${nombre}</div>
-              <div class="coupon-fields">
-                <div class="coupon-field"><span class="field-label">${t.fNombre}</span><span class="field-line"></span></div>
-                <div class="coupon-field"><span class="field-label">${t.fApellido}</span><span class="field-line"></span></div>
-                <div class="coupon-field"><span class="field-label">${t.fDNI}</span><span class="field-line"></span></div>
-                <div class="coupon-field"><span class="field-label">${t.fCelular}</span><span class="field-line"></span></div>
-                <div class="coupon-field"><span class="field-label">${t.fInstagram}</span><span class="field-line"></span></div>
+              <div class="coupon-fields" style="gap:${fieldGap}px;">
+                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fNombre}</span><span class="field-line"></span></div>
+                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fApellido}</span><span class="field-line"></span></div>
+                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fDNI}</span><span class="field-line"></span></div>
+                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fCelular}</span><span class="field-line"></span></div>
+                <div class="coupon-field"><span class="field-label" style="font-size:${fieldFontSize}px;">${t.fInstagram}</span><span class="field-line"></span></div>
               </div>
             </div>
             ${mostrarTalon ? `<div class="coupon-stub"><span class="stub-num" style="color:${color}">#${num}</span></div>` : ''}
