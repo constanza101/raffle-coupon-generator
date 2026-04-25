@@ -37,6 +37,7 @@ Designed for clubs, schools, small businesses, and community organizations runni
 5. Click **Print / Save PDF** — in the print dialog, set margins to **None** and save as PDF
 
 > **Tip:** In Chrome, go to *More settings → Margins → None* before saving to PDF to avoid extra whitespace.
+> ⚠️ For best results and to make sure all coupon content prints correctly, always save as PDF first and print from the PDF file — do not print directly from the browser.
 
 ---
 
